@@ -5,12 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Static Template</title>
-    <!-- <style>
-      input::-webkit-input-placeholder {
-        /* WebKit browsers */
-        padding-left: 10px;
+    <style>
+      @keyframes backgroundAnimation {
+        from {
+          left: 0px;
+        }
+
+        100% {
+          left: 100%;
+        }
       }
-    </style> -->
+      .animatedBackground {
+        width: 1126px;
+        position: relative;
+        animation: backgroundAnimation 4s linear infinite;
+      }
+    </style>
   </head>
 
   <body>
@@ -202,6 +212,7 @@
         >
           Get all latest content delivered to your email a few times a month.
         </p>
+        <!-- Newsletter Input | starts -->
         <div
           style="position: relative;
         display: flex;"
@@ -233,9 +244,90 @@
             Subscribe
           </button>
         </div>
+        <!-- Newsletter Input | ends -->
+
+        <div style="display: flex; margin-top: 50px;">
+          <a href="https://www.facebook.com/shipsy.in/">
+            <img
+              style="border-radius: 50%;
+              	height: 60px;	
+                width: 60px;
+                margin: 10px;"
+              src="https://en.facebookbrand.com/wp-content/uploads/2019/04/f_logo_RGB-Hex-Blue_512.png"
+            />
+          </a>
+          <a href="https://www.linkedin.com/company/shipsy-in">
+            <img
+              style="border-radius: 50%;
+              	height: 60px;	
+                width: 60px;
+                margin: 10px;"
+              src="https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-linkedin-circle-512.png"
+            />
+          </a>
+          <a href="https://twitter.com/TheShipsy">
+            <img
+              style="border-radius: 50%;
+              	height: 68px;	
+                width: 68px;
+                margin: 10px;"
+              src="https://cdn3.iconfinder.com/data/icons/free-social-icons/67/twitter_circle_color-512.png"
+            />
+          </a>
+          <a href="https://twitter.com/TheShipsy">
+            <img
+              style="border-radius: 50%;
+              	height: 68px;	
+                width: 68px;
+                margin: 10px;"
+              src="https://cdn3.iconfinder.com/data/icons/free-social-icons/67/twitter_circle_color-512.png"
+            />
+          </a>
+        </div>
       </div>
       <!-- Newsletter | ends -->
     </div>
     <!-- blog-posts-cards | ends -->
+
+    <!-- banner | starts -->
+    <div
+      style="display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 365px;	
+    background-color: #59E7FF;"
+    >
+      <div class="animatedBackground" style="position: absolute;">
+        This keeps moving...
+      </div>
+      <p
+        style="
+    padding: 0px;
+    color: #333333;	
+    font-family: Roboto;	
+    font-size: 36px;	
+    font-weight: bold;	
+    letter-spacing: 0.06px;	
+    line-height: 48px;"
+      >
+        Do you want to know more about the products?
+      </p>
+      <button
+        style="background-color: transparent;
+        box-sizing: border-box;	
+        height: 90px;	
+        width: 309px;	
+        border: 2px solid #333333;	
+        border-radius: 4px;
+        color: #333333;	
+        font-family: Roboto;	
+        font-size: 28px;	
+        letter-spacing: 0.05px;	
+        line-height: 28px;"
+      >
+        Request Demo
+      </button>
+    </div>
+    <!-- banner | ends -->
   </body>
 </html>
