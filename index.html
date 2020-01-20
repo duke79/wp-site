@@ -26,36 +26,82 @@
 
   <body>
     <!-- header | starts -->
-    <div
-      style="display: flex;
-    flex-direction: column;
-    position: relative;
-    height: 801px;
-    color: #fff;
-    background-color: blue;
-    z-index: 1;"
-    >
-      <video
-        autoplay
-        muted
-        loop
-        id="headerVideo"
-        style="position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: -1;"
-      >
+    <style>
+      .headerContainer {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        height: 801px;
+        color: #fff;
+        background-color: blue;
+        z-index: 1;
+      }
+      .headerVideo {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      }
+      .menuContainer {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+      }
+      .menuContent {
+        display: flex;
+        justify-content: space-around;
+        flex-grow: 2;
+        font-family: Lato;
+        font-size: 21px;
+        font-weight: bold;
+      }
+      .headerContent {
+        display: flex;
+        flex-direction: column;
+        align-self: center;
+        align-items: center;
+        justify-content: space-around;
+        flex-grow: 0.25;
+      }
+      .headerTitle {
+        font-family: Roboto;
+        font-size: 72px;
+        font-weight: bold;
+      }
+      .headerText {
+        font-family: Lato;
+        font-size: 24px;
+        font-weight: bold;
+        width: 783px;
+        text-align: center;
+      }
+      .headerButtonsContainer {
+        display: flex;
+        font-family: Lato;
+        font-size: 21px;
+      }
+      .headerButton {
+        right: 5px;
+        height: 48px;
+        width: 157px;
+        margin-right: 20px;
+        border: none;
+        border-radius: 4px;
+        background-color: #50b4f8;
+        color: white;
+        font-size: 21px;
+        font-family: "Lato", sans;
+      }
+    </style>
+    <div class="headerContainer">
+      <video autoplay muted loop id="headerVideo" class="headerVideo">
         <source
           src="https://test.shipsy.in/wp-content/uploads/2020/01/Sample-1-Video.mp4"
           type="video/mp4"
         />
       </video>
       <div style="flex-grow: 0.08"></div>
-      <div
-        style="display: flex;
-      justify-content: space-around;
-      align-items: center;"
-      >
+      <div class="menuContainer">
         <div style="flex-grow: 0.5"></div>
         <div style="flex-grow: 1;">
           <img
@@ -63,14 +109,7 @@
           />
         </div>
         <div style="flex-grow: 2"></div>
-        <div
-          style="display: flex; 
-        justify-content: space-around;
-        flex-grow: 2;
-        font-family: Lato;	
-        font-size: 21px;	
-        font-weight: bold;"
-        >
+        <div class="menuContent">
           <span> Home </span>
           <span> Products </span>
           <span> Blog </span>
@@ -80,54 +119,23 @@
         <div style="flex-grow: 0.5"></div>
       </div>
       <div style="flex-grow: 0.25"></div>
-      <div
-        style="display: flex;
-      flex-direction: column;
-      align-self: center;
-      align-items: center;
-      justify-content: space-around;
-      flex-grow: 0.25;"
-      >
-        <div style="font-family: Roboto;	font-size: 72px;	font-weight: bold;">
+      <div class="headerContent">
+        <div class="headerTitle">
           Your Digital Logistics Manager
         </div>
-        <div
-          style="font-family: Lato;	font-size: 24px;	font-weight: bold; width: 783px; text-align: center;"
-        >
+        <div class="headerText">
           Reduce Logistics Costs and Improve On-Time delivery of Goods across
           Ocean, Air and Road Transportation
         </div>
-        <div
-          style="display: flex;
-        font-family: Lato;	
-        font-size: 21px;"
-        >
-          <button
-            style="
-          right: 5px;
-          height: 48px;
-          	width: 157px;	
-            margin-right: 20px;
-            border:none;
-            border-radius: 4px;	
-            background-color: #50B4F8;
-            color: white;
-            font-size: 21px;
-            font-family: 'Lato', sans;"
-          >
+        <div class="headerButtonsContainer">
+          <button class="headerButton">
             Subscribe Us
           </button>
           <button
+            class="headerButton"
             style="
-          right: 5px;
-          height: 48px;
-          	width: 157px;	
-            border: 2px solid #FFFFFF;
-            border-radius: 4px;	
-            background: none;
-            color: white;
-            font-size: 21px;
-            font-family: 'Lato', sans;"
+          background: none;
+            border: 2px solid #FFFFFF;"
           >
             Request Demo
           </button>
@@ -138,91 +146,100 @@
     <!-- header | ends -->
 
     <!-- banner | starts -->
-    <div
-      style="display: flex;
-      position: relative;
-    justify-content: space-around;
-    align-items: center;
-    height: 256px;	
-    background-color: #FFE60E;
-    /* background-image: url('https://test.shipsy.in/wp-content/uploads/2020/01/Moving-Shipment-1024x75.gif'); */
-    background-repeat: no-repeat;
-    background-position: bottom;
-    background-size: contain;"
-    >
-      <p
-        style="
-    padding: 0px;
-    color: #333333;	
-    font-family: Roboto;	
-    font-size: 36px;	
-    font-weight: bold;	
-    letter-spacing: 0.06px;	
-    line-height: 48px;
-    z-index: 1;"
-      >
+    <style>
+      .bannerContainer {
+        display: flex;
+        position: relative;
+        justify-content: space-around;
+        align-items: center;
+        height: 256px;
+        background-color: #ffe60e;
+        /* background-image: url('https://test.shipsy.in/wp-content/uploads/2020/01/Moving-Shipment-1024x75.gif'); */
+        background-repeat: no-repeat;
+        background-position: bottom;
+        background-size: contain;
+      }
+      .bannerText {
+        padding: 0px;
+        color: #333333;
+        font-family: Roboto;
+        font-size: 36px;
+        font-weight: bold;
+        letter-spacing: 0.06px;
+        line-height: 48px;
+        z-index: 1;
+      }
+      .bannerButton {
+        background-color: transparent;
+        box-sizing: border-box;
+        height: 90px;
+        width: 309px;
+        border: 2px solid #333333;
+        border-radius: 4px;
+        color: #333333;
+        font-family: Roboto;
+        font-size: 28px;
+        letter-spacing: 0.05px;
+        line-height: 28px;
+        z-index: 1;
+      }
+    </style>
+    <div class="bannerContainer">
+      <p class="bannerText">
         Do you want to know more about the products?
       </p>
-      <button
-        style="background-color: transparent;
-        box-sizing: border-box;	
-        height: 90px;	
-        width: 309px;	
-        border: 2px solid #333333;	
-        border-radius: 4px;
-        color: #333333;	
-        font-family: Roboto;	
-        font-size: 28px;	
-        letter-spacing: 0.05px;	
-        line-height: 28px;
-        z-index: 1;"
-      >
+      <button class="bannerButton">
         Request Demo
       </button>
     </div>
     <!-- banner | ends -->
 
     <!-- info-card | starts -->
-    <div
-      style="display: flex; 
+    <style>
+      .infoCardContainer {
+        display: flex;
         width: 100%;
         padding-top: 120px;
-        background-color: #F9F9F9;
-        justify-content: space-around;"
-    >
-      <div
-        style="display: flex; 
-      flex-direction: column;
-      justify-content: space-around;
-      width: 40%;"
-      >
-        <h1
-          style="height: 60px;	
-          width: 410px;	
-          color: #125196;	
-          font-family: Roboto;	
-          font-size: 60px;	
-          font-weight: bold;	
-          letter-spacing: 0.1px;	
-          line-height: 60px;"
-        >
+        justify-content: space-around;
+      }
+      .infoCardTextColumn {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 40%;
+      }
+      .infoCardTitle {
+        height: 60px;
+        width: 410px;
+        color: #125196;
+        font-family: Roboto;
+        font-size: 60px;
+        font-weight: bold;
+        letter-spacing: 0.1px;
+        line-height: 60px;
+      }
+      .infoCardButton {
+        height: 60px;
+        width: 207px;
+        background-color: #1a9bf0;
+        color: #fff;
+        font-size: 21px;
+        font-family: Lato;
+        /* margin-top: auto; */
+        border-radius: 4px;
+        background-color: #1a9bf0;
+      }
+    </style>
+    <div class="infoCardContainer" style="background-color: #f9f9f9;">
+      <div class="infoCardTextColumn">
+        <h1 class="infoCardTitle">
           Rate Procurement
         </h1>
         <p style="font-size: 24px;">
           Freight cost reduction through competitive bids achieved from
           connecting trusted FFs and intelligent reference rate system
         </p>
-        <button
-          style="height: 60px;
-        width: 207px;
-        background-color: #1A9BF0;
-        color: #fff;
-        font-size: 21px;
-        font-family: Lato;
-        /* margin-top: auto; */
-        border-radius: 4px;	
-        background-color: #1A9BF0;"
-        >
+        <button class="infoCardButton">
           Learn More
         </button>
       </div>
@@ -237,11 +254,7 @@
     <!-- info-card | ends -->
 
     <!-- info-card 2 | starts -->
-    <div
-      style="display: flex; 
-       width: 100%;
-       padding-top: 120px;
-       justify-content: space-around;"
+    <div class="infoCardContainer""
     >
       <div style="width: 40%;">
         <img
@@ -250,40 +263,15 @@
           src="https://test.shipsy.in/wp-content/uploads/2020/01/Rate-Procure.png"
         />
       </div>
-      <div
-        style="display: flex; 
-     flex-direction: column;
-     justify-content: space-around;
-     width: 40%;"
-      >
-        <h1
-          style="height: 60px;	
-         width: 410px;	
-         color: #125196;	
-         font-family: Roboto;	
-         font-size: 60px;	
-         font-weight: bold;	
-         letter-spacing: 0.1px;	
-         line-height: 60px;"
-        >
+      <div class="infoCardTextColumn">
+        <h1 class="infoCardTitle">
           Rate Procurement
         </h1>
         <p style="font-size: 24px;">
           Freight cost reduction through competitive bids achieved from
           connecting trusted FFs and intelligent reference rate system
         </p>
-        <button
-          style="height: 60px;
-       width: 207px;
-       background-color: #1A9BF0;
-       color: #fff;
-       font-size: 21px;
-       font-family: Lato;
-       /* margin-top: auto; */
-       border-radius: 4px;	
-       background-color: #1A9BF0;
-       align-self: flex-end;"
-        >
+        <button class="infoCardButton" style="align-self: flex-end;">
           Learn More
         </button>
       </div>
@@ -291,25 +279,19 @@
     <!-- info-card 2 | ends -->
 
     <!-- banner 2 | starts -->
-    <div
-      style="display: flex;
-      position: relative;
-    justify-content: space-around;
-    align-items: center;
-    height: 365px;	
-    background-color: #59E7FF;
-    /* background-image: url('https://test.shipsy.in/wp-content/uploads/2020/01/Moving-Shipment-1024x75.gif'); */
-    background-repeat: no-repeat;
-    background-position: bottom;
-    background-size: contain;"
-    >
-      <img
-        style="background-color: #59E7FF;
+    <style>
+      .bannerImage {
+        background-color: #59E7FF;
         position: absolute;
         bottom: 0;
         left: 0;
         /* width: 100%; */
-        height: 50%;"
+        height: 50%;
+      }
+    </style>
+    <div class="bannerContainer" style="height: 365px;	
+    background-color: #59E7FF;">
+      <img class="bannerImage"
         src="https://test.shipsy.in/wp-content/uploads/2020/01/Moving-Shipment-1024x75.gif?130"
       />
       <!-- <div class="animatedBackground" style="position: absolute;">
@@ -318,58 +300,73 @@
           src="https://test.shipsy.in/wp-content/uploads/2020/01/Moving-Shipment-1024x75.gif"
         />
       </div> -->
-      <p
-        style="
-    padding: 0px;
-    color: #333333;	
-    font-family: Roboto;	
-    font-size: 36px;	
-    font-weight: bold;	
-    letter-spacing: 0.06px;	
-    line-height: 48px;
-    z-index: 1;"
-      >
+      <p class="bannerText">
         Do you want to know more about the products?
       </p>
-      <button
-        style="background-color: transparent;
-        box-sizing: border-box;	
-        height: 90px;	
-        width: 309px;	
-        border: 2px solid #333333;	
-        border-radius: 4px;
-        color: #333333;	
-        font-family: Roboto;	
-        font-size: 28px;	
-        letter-spacing: 0.05px;	
-        line-height: 28px;
-        z-index: 1;"
-      >
+      <button class="bannerButton">
         Request Demo
       </button>
     </div>
     <!-- banner 2 | ends -->
 
     <!-- blog-posts-cards | starts -->
-    <div
-      style="display: flex; 
-      justify-content: center;
-    flex-direction:column;
-    /* background-color: #E8C083; */
-    background-image: url('https://test.shipsy.in/wp-content/uploads/2020/01/Blog-Background-1024x576.png');
-    padding-bottom: 31px;"
-    >
+    <style>
+      .blogContainer {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        /* background-color: #E8C083; */
+        background-image: url("https://test.shipsy.in/wp-content/uploads/2020/01/Blog-Background-1024x576.png");
+        padding-bottom: 31px;
+      }
+      .blogTitle {
+        height: 71px;
+        color: #fff;
+        font-family: Roboto;
+        font-size: 60px;
+        font-weight: bold;
+        letter-spacing: 0.1px;
+        line-height: 71px;
+      }
+      .cardContainer {
+        position: relative;
+        box-sizing: border-box;
+        height: 363px;
+        width: 370px;
+        border-radius: 4px;
+        background-color: #ffffff;
+      }
+      .cardImage {
+        height: 209px;
+        width: 370px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+      }
+      .profileImage {
+        box-sizing: border-box;
+        height: 62px;
+        width: 62px;
+        border: 2px solid #333333;
+        border-radius: 50%;
+        position: absolute;
+        bottom: -31px;
+        left: 154px;
+      }
+      .cardText {
+        height: 84px;
+        width: 336px;
+        color: #333333;
+        font-family: Roboto;
+        font-size: 21px;
+        font-weight: bold;
+        line-height: 28px;
+        text-align: center;
+      }
+    </style>
+    <div class="blogContainer">
       <!-- cards-title | starts -->
       <div style="display: flex; justify-content: center">
-        <p
-          style="height: 71px;
-        color: #fff;
-        font-family: Roboto;	
-        font-size: 60px;	
-        font-weight: bold;	
-        letter-spacing: 0.1px;	
-        line-height: 71px;"
-        >
+        <p class="blogTitle">
           From Our Blog
         </p>
       </div>
@@ -381,127 +378,49 @@
       justify-content: space-around;"
       >
         <!-- One card | starts -->
-        <div
-          style="position: relative;
-          box-sizing: border-box;	
-        height: 363px;	
-        width: 370px;	        	
-        border-radius: 4px;	
-        background-color: #FFFFFF;"
-        >
+        <div class="cardContainer">
           <img
-            style="height: 209px; 
-            width: 370px;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;"
+            class="cardImage"
             src="https://specials-images.forbesimg.com/imageserve/82a018350ea24de796e60ae9d6a9c7da/960x0.jpg?fit=scale"
           />
-          <p
-            style="height: 84px;	
-            width: 336px;	
-            color: #333333;	
-            font-family: Roboto;	
-            font-size: 21px;	
-            font-weight: bold;	
-            line-height: 28px;	
-            text-align: center;"
-          >
+          <p class="cardText">
             Flipkart-Walmart Deal and What It Means for the Indian Online Retail
             Sector
           </p>
           <img
-            style="box-sizing: border-box;	
-            height: 62px;	
-            width: 62px;	
-            border: 2px solid #333333;
-            border-radius: 50%;
-            position: absolute;
-            bottom: -31px;
-            left: 154px"
+            class="profileImage"
             src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80"
           />
         </div>
         <!-- One card | ends -->
         <!-- One card | starts -->
-        <div
-          style="position: relative;
-          box-sizing: border-box;	
-        height: 363px;	
-        width: 370px;	        
-        border-radius: 4px;	
-        background-color: #FFFFFF;"
-        >
+        <div class="cardContainer">
           <img
-            style="height: 209px; 
-            width: 370px;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;"
+            class="cardImage"
             src="https://specials-images.forbesimg.com/imageserve/82a018350ea24de796e60ae9d6a9c7da/960x0.jpg?fit=scale"
           />
-          <p
-            style="height: 84px;	
-            width: 336px;	
-            color: #333333;	
-            font-family: Roboto;	
-            font-size: 21px;	
-            font-weight: bold;	
-            line-height: 28px;	
-            text-align: center;"
-          >
+          <p class="cardText">
             Flipkart-Walmart Deal and What It Means for the Indian Online Retail
             Sector
           </p>
           <img
-            style="box-sizing: border-box;	
-            height: 62px;	
-            width: 62px;	
-            border: 2px solid #333333;
-            border-radius: 50%;
-            position: absolute;
-            bottom: -31px;
-            left: 154px"
+            class="profileImage"
             src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80"
           />
         </div>
         <!-- One card | ends -->
         <!-- One card | starts -->
-        <div
-          style="position: relative;
-          box-sizing: border-box;	
-        height: 363px;	
-        width: 370px;	        
-        border-radius: 4px;	
-        background-color: #FFFFFF;"
-        >
+        <div class="cardContainer">
           <img
-            style="height: 209px; 
-            width: 370px;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;"
+            class="cardImage"
             src="https://specials-images.forbesimg.com/imageserve/82a018350ea24de796e60ae9d6a9c7da/960x0.jpg?fit=scale"
           />
-          <p
-            style="height: 84px;	
-            width: 336px;	
-            color: #333333;	
-            font-family: Roboto;	
-            font-size: 21px;	
-            font-weight: bold;	
-            line-height: 28px;	
-            text-align: center;"
-          >
+          <p class="cardText">
             Flipkart-Walmart Deal and What It Means for the Indian Online Retail
             Sector
           </p>
           <img
-            style="box-sizing: border-box;	
-            height: 62px;	
-            width: 62px;	
-            border: 2px solid #333333;
-            border-radius: 50%;
-            position: absolute;
-            bottom: -31px;
-            left: 154px"
+            class="profileImage"
             src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80"
           />
         </div>
