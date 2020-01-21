@@ -5,23 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Static Template</title>
-    <style>
-      @keyframes backgroundAnimation {
-        from {
-          left: 0px;
-        }
-
-        100% {
-          left: 100%;
-        }
-      }
-
-      .animatedBackground {
-        width: 1126px;
-        position: relative;
-        animation: backgroundAnimation 4s linear infinite;
-      }
-    </style>
   </head>
 
   <body style="margin: -8px;">
@@ -423,20 +406,39 @@
 
     <!-- banner 2 | starts -->
     <style>
-      .bannerImage {
-        background-color: #59E7FF;
+      .bannerImageContainer {
         position: absolute;
+        animation: backgroundAnimation 8s linear infinite;
+        display: flex;
+        height: 100%;
         bottom: 0;
         left: 0;
-        width: 100%;
-        height: 40%;
+        align-items: flex-end;
+      }
+      .bannerImage {
+        background-color: #59E7FF;
+        /* position: absolute; */
+        /* bottom: 0;
+        left: 0; */
+        /* width: 100%; */
+        height: 45%;
+      }
+      @keyframes backgroundAnimation {
+        from {
+          left: -154%;
+        }
+
+        100% {
+          left: 0%;
+        }
       }
     </style>
     <div class="bannerContainer" style="height: 365px;	
     background-color: #59E7FF;">
-      <!-- <img class="bannerImage"
-        src="https://test.shipsy.in/wp-content/uploads/2020/01/Moving-Shipment-1024x75.gif?130"
-      /> -->
+      <div class="bannerImageContainer">
+        <img class="bannerImage" src="https://test.shipsy.in/wp-content/uploads/2020/01/Moving-Shipment-1024x75.gif?130" />
+        <img class="bannerImage" src="https://test.shipsy.in/wp-content/uploads/2020/01/Moving-Shipment-1024x75.gif?130" />
+      </div>
       <p class="bannerText">
         Do you want to know more about the products?
       </p>
