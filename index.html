@@ -409,7 +409,7 @@
     <style>
       .bannerImageContainer {
         position: absolute;
-        animation: backgroundAnimation 16s linear infinite;
+        animation: backgroundAnimation 48s linear infinite;
         display: flex;
         height: 100%;
         bottom: 0;
@@ -437,8 +437,8 @@
     <div class="bannerContainer" style="height: 365px;	
     background-color: #59E7FF;">
       <div class="bannerImageContainer">
-        <img class="bannerImage" src="https://test.shipsy.in/wp-content/uploads/2020/01/Moving-Shipment-1024x75.gif?130" />
-        <img class="bannerImage" src="https://test.shipsy.in/wp-content/uploads/2020/01/Moving-Shipment-1024x75.gif?130" />
+        <img class="bannerImage" src="https://test.shipsy.in/wp-content/uploads/2020/01/Shipment-GIF-1024x75.png" />
+        <img class="bannerImage" src="https://test.shipsy.in/wp-content/uploads/2020/01/Shipment-GIF-1024x75.png" />
       </div>
       <p class="bannerText">
         Do you want to know more about the products?
@@ -460,6 +460,8 @@
         padding-bottom: 31px;
       }
       .blogTitle {
+        display: flex;
+        justify-content: center;
         height: 71px;
         color: #fff;
         font-family: Roboto;
@@ -467,6 +469,10 @@
         font-weight: bold;
         letter-spacing: 0.1px;
         line-height: 71px;
+      }
+      .cards {
+        display: flex;
+        justify-content: space-around;
       }
       .cardContainer {
         position: relative;
@@ -502,10 +508,66 @@
         line-height: 28px;
         text-align: center;
       }
+      .newsContainer {
+          display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #fff;
+        margin-top: 200px;
+      }
+      .newsTitle {
+        margin:0px;
+        font-family: Roboto;	
+        font-size: 36px;	
+        font-weight: bold;	
+        letter-spacing: 0.06px;	
+        line-height: 36px;
+      }
+      .newsText {
+        font-family: Avenir;	
+        font-size: 24px;	
+        font-weight: 300;	
+        letter-spacing: 0.04px;	
+        line-height: 24px;
+      }
+      .newsActions {
+        position: relative;
+        display: flex;
+      }
+      .newsEmailInput {
+        box-sizing: border-box; 
+        height:61px; 
+        width: 784px; 
+        border: 1px solid #000000; 
+        border-radius: 4px;
+        font-size: 24px;
+        font-family: 'Lato';
+        padding-left: 18px;
+      }
+      .newsSubscribeButton {
+        position:absolute;
+          right: 5px;
+          align-self: center;
+          height: 48px;
+          	width: 157px;	
+            border-radius: 4px;	
+            background-color: #50B4F8;
+            color: white;
+            font-size: 21px;
+            font-family: 'Lato', sans;
+      }
+      .newsButtons {
+        display: flex; margin-top: 50px;
+      }
+      .newsButton {
+        height: 60px;	
+                width: 60px;
+                margin: 10px;
+      }
     </style>
     <div class="blogContainer">
       <!-- cards-title | starts -->
-      <div style="display: flex; justify-content: center">
+      <div>
         <p class="blogTitle">
           From Our Blog
         </p>
@@ -513,10 +575,7 @@
       <!-- cards-title | ends -->
 
       <!-- Cards | starts -->
-      <div
-        style="display: flex;
-      justify-content: space-around;"
-      >
+      <div class="cards">
         <!-- One card | starts -->
         <div class="cardContainer">
           <img
@@ -573,109 +632,62 @@
 
       <!-- Newsletter | starts -->
       <div
-        style="display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: #fff;
-      margin-top: 200px;"
+        class="newsContainer"
       >
         <p
-          style="margin:0px;
-        font-family: Roboto;	
-        font-size: 36px;	
-        font-weight: bold;	
-        letter-spacing: 0.06px;	
-        line-height: 36px;"
+          class="newsTitle"
         >
           Join Our Newsletter
         </p>
         <p
-          style="
-        font-family: Avenir;	
-        font-size: 24px;	
-        font-weight: 300;	
-        letter-spacing: 0.04px;	
-        line-height: 24px;"
+          class="newsText"
         >
           Get all latest content delivered to your email a few times a month.
         </p>
         <!-- Newsletter Input | starts -->
         <div
-          style="position: relative;
-        display: flex;"
+          class="newsActions"
         >
           <input
             placeholder="Your Email"
-            style="box-sizing: border-box; 
-            height:61px; 
-            width: 784px; 
-            border: 1px solid #000000; 
-            border-radius: 4px;
-            font-size: 24px;
-            font-family: 'Lato';
-            padding-left: 18px;
-            "
+            class="newsEmailInput"
           />
           <button
-            style="position:absolute;
-          right: 5px;
-          align-self: center;
-          height: 48px;
-          	width: 157px;	
-            border-radius: 4px;	
-            background-color: #50B4F8;
-            color: white;
-            font-size: 21px;
-            font-family: 'Lato', sans;"
+            class="newsSubscribeButton"
           >
             Subscribe
           </button>
         </div>
         <!-- Newsletter Input | ends -->
 
-        <div style="display: flex; margin-top: 50px;">
+        <div class="newsButtons">
           <a href="https://www.facebook.com/shipsy.in/">
             <img
-              style="
-              	height: 60px;	
-                width: 60px;
-                margin: 10px;"
+              class="newsButton"
               src="https://test.shipsy.in/wp-content/uploads/2020/01/Facebook.png"
             />
           </a>
           <a href="https://www.linkedin.com/company/shipsy-in">
             <img
-              style="
-              	height: 60px;	
-                width: 60px;
-                margin: 10px;"
+            class="newsButton"
               src="https://test.shipsy.in/wp-content/uploads/2020/01/LinkedIn.png"
             />
           </a>
           <a href="https://twitter.com/TheShipsy">
             <img
-              style="
-              	height: 60px;	
-                width: 60px;
-                margin: 10px;"
+            class="newsButton"
               src="https://test.shipsy.in/wp-content/uploads/2020/01/Twitter.png"
             />
           </a>
           <a href="https://twitter.com/TheShipsy">
             <img
-              style="
-              	height: 60px;	
-                width: 60px;
-                margin: 10px;"
+            class="newsButton"
               src="https://test.shipsy.in/wp-content/uploads/2020/01/Instagram.png"
             />
           </a>
           <a href="https://twitter.com/TheShipsy">
             <img
-              style="
-              	height: 60px;	
-                width: 60px;
-                margin: 10px;"
+            class="newsButton"
               src="https://test.shipsy.in/wp-content/uploads/2020/01/Whatsapp.png"
             />
           </a>
