@@ -5,794 +5,254 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Static Template</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/default.min.css"
+    />
+    <script>
+      hljs.initHighlightingOnLoad();
+      var SPACE = "    ";
+      function toProperty(name) {
+        if (name.charAt(0) == "-") name = name.slice(0);
+
+        return name.replace(/[^a-z0-9]([a-z0-9])?/gi, function(v, l) {
+          if (l) return l.toUpperCase();
+          return "";
+        });
+      }
+
+      function toSelectors(name) {
+        var names = name.split(",");
+
+        return names.map(function(name) {
+          name = name.trim();
+          var newName = "";
+
+          if (name.charAt(0) == ".") {
+            name = name.slice(1);
+          } else if (name.charAt(0) == "#") {
+            newName += "Id";
+            name = name.slice(1);
+          } else {
+            newName += "Element";
+          }
+
+          return (
+            name.replace(/([^a-z0-9])([a-z0-9])?/gi, function(v, c, l) {
+              if (l)
+                return c == "," || c == " " ? l.toLowerCase() : l.toUpperCase();
+              return "";
+            }) + newName
+          );
+        });
+      }
+
+      function tokenizer(code) {
+        var tokens = [];
+        var token = "";
+        var whitespc = ["\r\n", "\n\r", "\n", "\r"];
+        var lastChar = "\0";
+        var nextChar = "\0";
+        var char = "\0";
+        var specialChars = ["{", "}", ":", ";"];
+        var specialCharsPB = ["{", "}", ";"];
+        var sc = null;
+        var inBrackets = false;
+
+        for (var i = 0; i < code.length; i++) {
+          if (i) lastChar = code.charAt(i - 1);
+          char = code.charAt(i);
+          if (i + 1 < code.length) nextChar = code.charAt(i + 1);
+
+          if (~whitespc.indexOf(char) && ~whitespc.indexOf(lastChar)) {
+            continue;
+          }
+
+          sc = inBrackets ? specialChars : specialCharsPB;
+
+          if (~sc.indexOf(char)) {
+            if (char == "{") inBrackets = true;
+            if (char == "}") inBrackets = false;
+            tokens.push(token);
+            tokens.push(char);
+            token = "";
+            continue;
+          }
+
+          token += char;
+        }
+
+        if (token) tokens.push(token);
+
+        return tokens
+          .map(function(token) {
+            return token.trim();
+          })
+          .filter(function(token) {
+            return token;
+          });
+      }
+
+      function repeat(char, times) {
+        if (times) return repeat(char, times - 1) + char;
+        return "";
+      }
+
+      function convertoToJS(tokens) {
+        var items = [];
+        var actualItem = null;
+        var actualProp = null;
+        debugger;
+        function readSelector(token) {
+          var selectors = toSelectors(token);
+
+          actualItem = {
+            originalValue: token,
+            selectors: selectors,
+            values: {}
+          };
+
+          actualProp = null;
+          items.push(actualItem);
+
+          return readBracketO;
+        }
+
+        function readBracketO(token) {
+          if (token != "{") throw new Error("Era esperado um '{' ");
+
+          return readProperty;
+        }
+
+        function readBracketC(token) {
+          if (token != "}") throw new Error("Era esperado um '}' ");
+          return readSelector;
+        }
+
+        function readDefinition(token) {
+          if (token != ":") throw new Error("Era esperado um ':' ");
+
+          return readValue;
+        }
+
+        function readProperty(token) {
+          if (token == "}") return readBracketC(token);
+
+          var property = toProperty(token);
+          actualProp = property;
+
+          if (!actualItem.values[property]) {
+            actualItem.values[property] = [];
+          }
+
+          return readDefinition;
+        }
+
+        function readValue(token) {
+          actualItem.values[actualProp].push(token);
+
+          return readFinal;
+        }
+
+        function readFinal(token) {
+          if (token == "}") return readBracketC(token);
+          if (token != ";") throw new Error("Era esperado um ';' ");
+          return readProperty;
+        }
+
+        var nextAction = readSelector;
+        var i = 0;
+        tokens.forEach(function(token) {
+          i++;
+          console.log("processing " + i);
+          nextAction = nextAction(token);
+        });
+
+        return renderJS(items);
+      }
+
+      function renderJS(items) {
+        var objects = [
+          "import { createUseStyles } from 'react-jss';\n\nconst useStyles = createUseStyles(\{"
+        ];
+        objects = objects.concat(items.map(renderItem).join(","));
+        objects.push("\});");
+        return objects.join("\n");
+      }
+
+      function renderItem(item) {
+        var code = [""];
+
+        var properties = [];
+
+        for (var prop in item.values) {
+          var propitem = {
+            name: prop,
+            value: item.values[prop][item.values[prop].length - 1]
+          };
+          var markup = '"';
+          if (~propitem.value.indexOf('"')) {
+            markup = "'";
+            propitem.value = propitem.value.replace(/'/gi, "\\'");
+          }
+          properties.push(
+            SPACE +
+              SPACE +
+              propitem.name +
+              ": " +
+              markup +
+              propitem.value +
+              markup
+          );
+        }
+
+        properties = properties.map(function(x) {
+          return SPACE + x;
+        });
+
+        item.selectors.forEach(function(i) {
+          code.push(SPACE + i + ": {");
+          code.push(properties.join(",\n"));
+          code.push(SPACE + "}");
+        });
+
+        return code.join("\n");
+      }
+
+      var txt = document.querySelector("textarea");
+      var code = document.querySelector("code");
+
+      txt.addEventListener("change", function() {
+        window.tokens = tokenizer(txt.value);
+        code.textContent = convertoToJS(window.tokens);
+      });
+    </script>
   </head>
 
-  <body style="margin: -8px;">
-    <!-- header | starts -->
-    <style>
-      .headerContainer {
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        height: 810px;
-        color: #fff;
-        background-color: blue;
-        z-index: 1;
-      }
-      .headerVideo {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-      }
-      .menuContainer {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-      }
-      .menuContent {
-        display: flex;
-        justify-content: space-around;
-        flex-grow: 2;
-        font-family: Lato;
-        font-size: 21px;
-        font-weight: bold;
-      }
-      .headerContent {
-        display: flex;
-        flex-direction: column;
-        align-self: center;
-        align-items: center;
-        justify-content: space-around;
-        flex-grow: 0.25;
-      }
-      .headerTitle {
-        font-family: Roboto;
-        font-size: 72px;
-        font-weight: bold;
-      }
-      .headerText {
-        font-family: Lato;
-        font-size: 24px;
-        font-weight: bold;
-        width: 783px;
-        text-align: center;
-      }
-      .headerButtonsContainer {
-        display: flex;
-        font-family: Lato;
-        font-size: 21px;
-      }
-      .headerButton {
-        right: 5px;
-        height: 48px;
-        width: 157px;
-        margin-right: 20px;
-        border: none;
-        border-radius: 4px;
-        background-color: #50b4f8;
-        color: white;
-        font-size: 21px;
-        font-family: "Lato", sans;
-      }
-
-    </style>
-    <style>
-        ul {
-            position:relative;
-            margin:0;
-            padding:0;
-        }
-        .menu {
-            width:auto;
-            float:left;
-            font-weight:bold;
-            cursor:pointer;
-            /* background:#5C7C99; */
-            border-radius:2px;
-            -moz-border-radius:2px; 
-            -webkit-border-radius:2px;
-        }
-        .menu ul {
-            display:table;
-            /* line-height:10px; */
-        }
-        .menu ul li {
-            position:relative;
-            display:inline;
-        }
-        .menu ul li a {
-            float:left;
-            position:relative;
-            /* padding:20px; */
-            color:#fff;
-            text-decoration:none;
-        }
-        .menu ul li a:hover {
-            color:#42a3f2;
-        }
-        .menu ul ul {
-            position:absolute;
-            width:210px;
-            top:50px;
-            left:-370px;       /* CHROME, SAFARI */
-            -webkit-transform:translateX(232px);     /* CHROME SAFARI */
-            -moz-transform:translateX(135px);       /* FIREFOX */
-            
-            /* BACKGROUND COLOR AND BORDER. */
-            background:#fff;
-            border-radius:2px;
-            -moz-border-radius:2px; 
-            -webkit-border-radius:2px;
-
-            /* ADD BORDER SHADOW. */
-            /* box-shadow:0 0 10px #444; */
-            /* -moz-box-shadow:0 0 10px #444; */
-            /* -webkit-box-shadow:0 0 10px #444; */
-            box-shadow: 0px 15px 27px 0px rgba(14, 0, 40, 0.05);
-        }
-        
-        /* SUB MENU LIST */
-        .menu ul ul li {
-            text-align:left; 
-            margin:0;
-        }
-        
-        /* SET HEIGHT AS '0', SO THE SUBMENUS REMAINS HIDDEN IN THE BEGINNING. */
-        
-        .menu ul ul li a {
-            height:0; 
-            line-height:0; 
-            width:200px; 
-            color:#000;
-            padding:0 20px;
-            -moz-opacity: 0;
-            opacity:0;
-            filter: alpha(opacity=0);
-
-            font-family: Poppins;
-            line-height: 15px;
-            font-weight: 400;
-            font-style: normal;
-            font-size: 14px;
-        }
-        .menu ul ul ul {
-            visibility:hidden;
-            position:absolute;
-            top:175px;
-        }
-        .categories a {
-	        transition:all 0.3s linear; 
-	        -o-transition:all 0.3s linear;
-	        -moz-transition:all 0.3s linear; 
-	        -webkit-transition:all 0.3s linear;
-        }
-        .categories:hover ul li a {
-            height:40px;
-            line-height:40px;
-            -moz-opacity: 1;
-            opacity:1;
-            filter: alpha(opacity=100);
-        }
-        
-        .menu .categories #da > ul {
-            transition:opacity 0.2s 0.01s ease-in-out, left 0.2s 0.1s ease-out, visibility 0.1s 0.1s linear;
-            -o-transition:opacity 0.2s 0.01s ease-in-out, left 0.2s 0.1s ease-out, visibility 0.1s 0.1s linear;
-            -moz-transition:opacity 0.2s 0.01s ease-in-out, left 0.2s 0.1s ease-out, visibility 0.1s 0.1s linear;
-	        -webkit-transition:opacity 0.2s 0.01s ease-in-out, left 0.2s 0.1s ease-out, visibility 0.1s 0.1s linear;
-        }
-        .menu .categories #da:hover > ul {
-            visibility:visible;
-            position:absolute;
-            left:-232px;                             /* CHROME, SAFARI */
-            -moz-transform:translateX(232px);       /* FIREFOX */
-        }
-    </style>
-    <div class="headerContainer">
-      <video autoplay muted loop id="headerVideo" class="headerVideo">
-        <source
-          src="https://test.shipsy.in/wp-content/uploads/2020/01/Sample-1-Video.mp4"
-          type="video/mp4"
-        />
-      </video>
-      <div style="flex-grow: 0.08"></div>
-      <div class="menuContainer">
-        <div style="flex-grow: 0.5"></div>
-        <div style="flex-grow: 1;">
-          <img
-            src="https://www.shipsy.in/wp-content/uploads/2018/08/logo.png"
-          />
-        </div>
-        <div style="flex-grow: 2"></div>
-        <div class="menuContent">
-          <span> Home </span>
-          <span class="menu"> 
-            <ul>
-                <li class="categories"><a href="#">Products</a>
-                  <ul>
-                      <li><a href="#">Shipsy PROCURE</a></li>
-                      <li><a href="#">Shipsy TRACK</a></li>
-                      <li><a href="#">Shipsy LOGISTICS</a></li>
-                      <li><a href="#">Shipsy TRANSPORT</a></li>
-                      <li><a href="#">Shipsy 3PL Aggregator Platform</a></li>
-                      <!-- <li id="da">
-                          <a href="#">DESKTOP APPLICATIONS +</a>
-                          <ul>
-                              <li><a href="#">DATAGRIDVIEW (C#)</a></li>
-                              <li><a href="#">CALCULATOR APP</a></li>
-                          </ul>
-                      </li> -->
-                  </ul>
-              </li>
-            </ul>
-          </span>
-          <span class="menu"> 
-              <ul>
-                  <li class="categories"><a href="#">Industries</a>
-                    <ul>
-                        <li><a href="#">Manufacturing</a></li>
-                        <li><a href="#">Courier & Express Delivery</a></li>
-                        <li><a href="#">E-commerce</a></li>
-                        <li><a href="#">Retail & FMCG</a></li>
-                    </ul>
-                </li>
-              </ul>
-            </span>
-          <span> Blog </span>
-          <span> About Us </span>
-          <span> Careers </span>
-        </div>
-        <div style="flex-grow: 0.5"></div>
+  <body>
+    <div class="container">
+      <div class="section">
+        <h5>Conversion between CSS -> Inline JS Style</h5>
+        <p>Stuff</p>
       </div>
-      <div style="flex-grow: 0.25"></div>
-      <div class="headerContent">
-        <div class="headerTitle">
-          Your Digital Logistics Manager
+      <div class="divider"></div>
+      <div class="row">
+        <div class="input-field  col s6">
+          <textarea class="materialize-textarea"></textarea>
+          <label for="textarea1">put here your css</label>
         </div>
-        <div class="headerText">
-          Reduce Logistics Costs and Improve On-Time delivery of Goods across
-          Ocean, Air and Road Transportation
-        </div>
-        <div class="headerButtonsContainer">
-          <button class="headerButton">
-            Subscribe Us
-          </button>
-          <button
-            class="headerButton"
-            style="
-          background: none;
-            border: 2px solid #FFFFFF;"
-          >
-            Request Demo
-          </button>
-        </div>
-      </div>
-      <!-- <div style="flex-grow: 0.25"></div> -->
-    </div>
-    <!-- header | ends -->
-
-    <!-- banner | starts -->
-    <style>
-      .bannerContainer {
-        display: flex;
-        position: relative;
-        justify-content: space-around;
-        align-items: center;
-        height: 256px;
-        background-color: #ffe60e;
-        /* background-image: url('https://test.shipsy.in/wp-content/uploads/2020/01/Moving-Shipment-1024x75.gif'); */
-        background-repeat: no-repeat;
-        background-position: bottom;
-        background-size: contain;
-        overflow: hidden;
-      }
-      .bannerText {
-        padding: 0px;
-        color: #333333;
-        font-family: Roboto;
-        font-size: 36px;
-        font-weight: bold;
-        letter-spacing: 0.06px;
-        line-height: 48px;
-        z-index: 1;
-      }
-      .bannerButton {
-        background-color: transparent;
-        box-sizing: border-box;
-        height: 90px;
-        width: 309px;
-        border: 2px solid #333333;
-        border-radius: 4px;
-        color: #333333;
-        font-family: Roboto;
-        font-size: 28px;
-        letter-spacing: 0.05px;
-        line-height: 28px;
-        z-index: 1;
-      }
-    </style>
-    <div class="bannerContainer">
-      <p class="bannerText">
-        Do you want to know more about the products?
-      </p>
-      <button class="bannerButton">
-        Request Demo
-      </button>
-    </div>
-    <!-- banner | ends -->
-
-    <!-- info-card | starts -->
-    <style>
-      .infoCardContainer {
-        display: flex;
-        width: 100%;
-        padding-top: 120px;
-        justify-content: space-around;
-      }
-      .infoCardTextColumn {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        width: 40%;
-      }
-      .infoCardTitle {
-        height: 60px;
-        width: 410px;
-        color: #125196;
-        font-family: Roboto;
-        font-size: 60px;
-        font-weight: bold;
-        letter-spacing: 0.1px;
-        line-height: 60px;
-      }
-      .infoCardButton {
-        height: 60px;
-        width: 207px;
-        background-color: #1a9bf0;
-        color: #fff;
-        font-size: 21px;
-        font-family: Lato;
-        /* margin-top: auto; */
-        border-radius: 4px;
-        background-color: #1a9bf0;
-      }
-    </style>
-    <div class="infoCardContainer" style="background-color: #f9f9f9;">
-      <div class="infoCardTextColumn">
-        <h1 class="infoCardTitle">
-          Rate Procurement
-        </h1>
-        <p style="font-size: 24px;">
-          Freight cost reduction through competitive bids achieved from
-          connecting trusted FFs and intelligent reference rate system
-        </p>
-        <button class="infoCardButton">
-          Learn More
-        </button>
-      </div>
-      <div style="width: 40%;">
-        <img
-          style="height: auto;
-          width: 100%;"
-          src="https://test.shipsy.in/wp-content/uploads/2020/01/Rate-Procure.png"
-        />
-      </div>
-    </div>
-    <!-- info-card | ends -->
-
-    <!-- info-card 2 | starts -->
-    <div class="infoCardContainer""
-    >
-      <div style="width: 40%;">
-        <img
-          style="height: auto;
-         width: 100%;"
-          src="https://test.shipsy.in/wp-content/uploads/2020/01/Rate-Procure.png"
-        />
-      </div>
-      <div class="infoCardTextColumn">
-        <h1 class="infoCardTitle">
-          Rate Procurement
-        </h1>
-        <p style="font-size: 24px;">
-          Freight cost reduction through competitive bids achieved from
-          connecting trusted FFs and intelligent reference rate system
-        </p>
-        <button class="infoCardButton" style="align-self: flex-end;">
-          Learn More
-        </button>
-      </div>
-    </div>
-    <!-- info-card 2 | ends -->
-
-    <!-- banner 2 | starts -->
-    <style>
-      .bannerImageContainer {
-        position: absolute;
-        animation: backgroundAnimation 48s linear infinite;
-        display: flex;
-        height: 100%;
-        bottom: 0;
-        left: 0;
-        align-items: flex-end;
-      }
-      .bannerImage {
-        background-color: #59E7FF;
-        /* position: absolute; */
-        /* bottom: 0;
-        left: 0; */
-        /* width: 100%; */
-        height: 45%;
-      }
-      @keyframes backgroundAnimation {
-        from {
-          left: -154%;
-        }
-
-        100% {
-          left: 0%;
-        }
-      }
-    </style>
-    <div class="bannerContainer" style="height: 365px;	
-    background-color: #59E7FF;">
-      <div class="bannerImageContainer">
-        <img class="bannerImage" src="https://test.shipsy.in/wp-content/uploads/2020/01/Shipment-GIF-1024x75.png" />
-        <img class="bannerImage" src="https://test.shipsy.in/wp-content/uploads/2020/01/Shipment-GIF-1024x75.png" />
-      </div>
-      <p class="bannerText">
-        Do you want to know more about the products?
-      </p>
-      <button class="bannerButton">
-        Request Demo
-      </button>
-    </div>
-    <!-- banner 2 | ends -->
-
-    <!-- blog-posts-cards | starts -->
-    <style>
-      .blogContainer {
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        /* background-color: #E8C083; */
-        background-image: url("https://test.shipsy.in/wp-content/uploads/2020/01/Blog-Background-1024x576.png");
-        padding-bottom: 31px;
-      }
-      .blogTitle {
-        display: flex;
-        justify-content: center;
-        height: 71px;
-        color: #fff;
-        font-family: Roboto;
-        font-size: 60px;
-        font-weight: bold;
-        letter-spacing: 0.1px;
-        line-height: 71px;
-      }
-      .cards {
-        display: flex;
-        justify-content: space-around;
-      }
-      .cardContainer {
-        position: relative;
-        box-sizing: border-box;
-        height: 363px;
-        width: 370px;
-        border-radius: 4px;
-        background-color: #ffffff;
-      }
-      .cardImage {
-        height: 209px;
-        width: 370px;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-      }
-      .profileImage {
-        box-sizing: border-box;
-        height: 62px !important;
-        width: 62px;
-        border: 2px solid #fff !important;
-        border-radius: 50% !important;
-        position: absolute;
-        bottom: -31px;
-        left: 154px;
-      }
-      .cardText {
-        height: 84px;
-        width: 336px;
-        color: #333333;
-        font-family: Roboto;
-        font-size: 21px;
-        font-weight: bold;
-        line-height: 28px;
-        text-align: center;
-      }
-      .newsContainer {
-          display: flex;
-        flex-direction: column;
-        align-items: center;
-        color: #fff;
-        margin-top: 200px;
-      }
-      .newsTitle {
-        margin:0px;
-        font-family: Roboto;	
-        font-size: 36px;	
-        font-weight: bold;	
-        letter-spacing: 0.06px;	
-        line-height: 36px;
-      }
-      .newsText {
-        font-family: Avenir;	
-        font-size: 24px;	
-        font-weight: 300;	
-        letter-spacing: 0.04px;	
-        line-height: 24px;
-      }
-      .newsActions {
-        position: relative;
-        display: flex;
-      }
-      .newsEmailInput {
-        box-sizing: border-box; 
-        height:61px; 
-        width: 784px; 
-        border: 1px solid #000000; 
-        border-radius: 4px;
-        font-size: 24px;
-        font-family: 'Lato';
-        padding-left: 18px;
-      }
-      .newsSubscribeButton {
-        position:absolute;
-          right: 5px;
-          align-self: center;
-          height: 48px;
-          	width: 157px;	
-            border-radius: 4px;	
-            background-color: #50B4F8;
-            color: white;
-            font-size: 21px;
-            font-family: 'Lato', sans;
-      }
-      .newsButtons {
-        display: flex; margin-top: 50px;
-      }
-      .newsButton {
-        height: 60px;	
-                width: 60px;
-                margin: 10px;
-      }
-    </style>
-    <div class="blogContainer">
-      <!-- cards-title | starts -->
-      <div>
-        <p class="blogTitle">
-          From Our Blog
-        </p>
-      </div>
-      <!-- cards-title | ends -->
-
-      <!-- Cards | starts -->
-      <div class="cards">
-        <!-- One card | starts -->
-        <div class="cardContainer">
-          <img
-            class="cardImage"
-            src="https://specials-images.forbesimg.com/imageserve/82a018350ea24de796e60ae9d6a9c7da/960x0.jpg?fit=scale"
-          />
-          <p class="cardText">
-            Flipkart-Walmart Deal and What It Means for the Indian Online Retail
-            Sector
-          </p>
-          <img
-            class="profileImage"
-            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80"
-          />
-        </div>
-        <!-- One card | ends -->
-        <!-- One card | starts -->
-        <div class="cardContainer">
-          <img
-            class="cardImage"
-            src="https://specials-images.forbesimg.com/imageserve/82a018350ea24de796e60ae9d6a9c7da/960x0.jpg?fit=scale"
-          />
-          <p class="cardText">
-            Flipkart-Walmart Deal and What It Means for the Indian Online Retail
-            Sector
-          </p>
-          <img
-            class="profileImage"
-            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80"
-          />
-        </div>
-        <!-- One card | ends -->
-        <!-- One card | starts -->
-        <div class="cardContainer">
-          <img
-            class="cardImage"
-            src="https://specials-images.forbesimg.com/imageserve/82a018350ea24de796e60ae9d6a9c7da/960x0.jpg?fit=scale"
-          />
-          <p class="cardText">
-            Flipkart-Walmart Deal and What It Means for the Indian Online Retail
-            Sector
-          </p>
-          <img
-            class="profileImage"
-            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80"
-          />
-        </div>
-        <!-- One card | ends -->
-      </div>
-      <!-- Cards | ends -->
-
-      <br />
-      <br />
-
-      <!-- Newsletter | starts -->
-      <div
-        class="newsContainer"
-      >
-        <p
-          class="newsTitle"
-        >
-          Join Our Newsletter
-        </p>
-        <p
-          class="newsText"
-        >
-          Get all latest content delivered to your email a few times a month.
-        </p>
-        <!-- Newsletter Input | starts -->
-        <div
-          class="newsActions"
-        >
-          <input
-            placeholder="Your Email"
-            class="newsEmailInput"
-          />
-          <button
-            class="newsSubscribeButton"
-          >
-            Subscribe
-          </button>
-        </div>
-        <!-- Newsletter Input | ends -->
-
-        <div class="newsButtons">
-          <a href="https://www.facebook.com/shipsy.in/">
-            <img
-              class="newsButton"
-              src="https://test.shipsy.in/wp-content/uploads/2020/01/Facebook.png"
-            />
-          </a>
-          <a href="https://www.linkedin.com/company/shipsy-in">
-            <img
-            class="newsButton"
-              src="https://test.shipsy.in/wp-content/uploads/2020/01/LinkedIn.png"
-            />
-          </a>
-          <a href="https://twitter.com/TheShipsy">
-            <img
-            class="newsButton"
-              src="https://test.shipsy.in/wp-content/uploads/2020/01/Twitter.png"
-            />
-          </a>
-          <a href="https://twitter.com/TheShipsy">
-            <img
-            class="newsButton"
-              src="https://test.shipsy.in/wp-content/uploads/2020/01/Instagram.png"
-            />
-          </a>
-          <a href="https://twitter.com/TheShipsy">
-            <img
-            class="newsButton"
-              src="https://test.shipsy.in/wp-content/uploads/2020/01/Whatsapp.png"
-            />
-          </a>
-        </div>
-      </div>
-      <!-- Newsletter | ends -->
-    </div>
-    <!-- blog-posts-cards | ends -->
-
-    <!-- footer | starts -->
-    <style>
-      .footerText {
-        font-family: Lato;
-        font-size: 16px;
-        letter-spacing: 0.03px;
-      }
-      .footerContainer {
-        display: flex;
-        justify-content: space-around;
-        color: #fff;
-        background-color: #0072b4;
-        padding-top: 100px;
-        padding-bottom: 50px;
-      }
-      .footerColumn {
-        display: flex;
-        flex-direction: column;
-      }
-      .footerColumn h2 {
-        color: #fff;
-      }
-      .footerPolicy {
-        background-color: #0f63a2;
-        height: 60px;
-        color: #fff;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-      }
-      pre {
-        background-color: #2572b4;
-        color: #fff;
-      }
-    </style>
-    <div class="footerContainer">
-      <div class="footerColumn">
-        <h2>Products</h2>
-        <div class="footerText">
-          <p>Procure</p>
-          <p>Track</p>
-          <p>Logistics</p>
-          <p>Transport</p>
-          <p>3PL Aggregator Platform</p>
-        </div>
-      </div>
-      <div class="footerColumn">
-        <h2>Industries</h2>
-        <div class="footerText">
-          <p>Courer and Express Delivery</p>
-          <p>Retail & FMCG</p>
-          <p>Manufacturing</p>
-          <p>E-Commerce</p>
-        </div>
-      </div>
-      <div class="footerColumn">
-        <h2>Company</h2>
-        <div class="footerText">
-          <p>About Us</p>
-          <p>Blog</p>
-          <p>Careers</p>
-          <p>Contact Us</p>
-        </div>
-      </div>
-      <div class="footerColumn">
-        <h2>Gurgaon Office</h2>
-        <div class="footerText">
-          <pre>
-            Plot 149, 3rd Floor, Anu Tower, Sector 44,
-            Gurugram. Haryana - 122003 (India) 
-
-            +91-124-4257121 
-
-            contact@shipsy.co.in
-          </pre>
-        </div>
-        <h2>Mumbai Office</h2>
-        <div class="footerText">
-          <pre>
-              Plot 149, 3rd Floor, Anu Tower, Sector 44,
-              Gurugram. Haryana - 122003 (India)
-
-              +91-124-4257121
-              
-              contact@shipsy.co.in
-          </pre>
+        <div class="input-field col s6">
+          <pre
+            style="margin-top: 40px"
+            class="z-depth-1"
+          ><code class="js">...</code></pre>
+          <label for="textarea1">JS here!</label>
         </div>
       </div>
     </div>
-    <div class="footerPolicy">
-      <p>
-        © 2019 Llama Logisol Private Limited | All rights reserved | Privacy
-        Policy
-      </p>
-      <span style="flex-grow: 0.1;" />
-    </div>
-    <!-- footer | ends-->
   </body>
 </html>
